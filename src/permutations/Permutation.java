@@ -44,7 +44,7 @@ public class Permutation {
 			if(mobileDirectionalEntity == null) {
 				// all permutations have been found
 				System.out.println("Total permutations: "+numPermutations);
-				System.out.println("Maximum payout for all packages(estimate)" + sortedList.get(0).getEntity().maxPayout);
+				System.out.println("Maximum payout for all packages(sum of maximum payouts)" + sortedList.get(0).getEntity().maxPayout);
 				break;
 			}
 			if(mobileDirectionalEntity.getDir() == 1) {

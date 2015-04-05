@@ -84,10 +84,9 @@ public class Problem {
 		
 	}
 	
-	
 	public static int score(ArrayList<Job> plan){
-		int reward=0;
-		int location =0;
+		int reward= 0;
+		int location = 0;
 		int time = 0;
 		
 		if (plan.size() < jobs.size()){
