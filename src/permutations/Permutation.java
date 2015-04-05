@@ -1,6 +1,7 @@
 package permutations;
 import java.util.*;
 import java.math.BigInteger;
+import java.text.DecimalFormat;
 
 import setup.Job;
 import setup.Problem;
@@ -35,7 +36,6 @@ public class Permutation {
 	
 	public void  getPermutation() {
 		long startTime = System.nanoTime();
-		
 		int max = 0;
 		while(true) {
 			ArrayList<Job> orderedJobs = new ArrayList<Job>();
@@ -44,6 +44,7 @@ public class Permutation {
 			if(mobileDirectionalEntity == null) {
 				// all permutations have been found
 				System.out.println("Total permutations: "+numPermutations);
+				System.out.println("Maximum payout for all packages(estimate)" + sortedList.get(0).getEntity().maxPayout);
 				break;
 			}
 			if(mobileDirectionalEntity.getDir() == 1) {
@@ -70,8 +71,11 @@ public class Permutation {
 			if(score > max){
 				max = score;
 				//code
-				long endTime = System.nanoTime(); 
-				System.out.print("Payout: " + score + ", job order: " + repres +"; Took "+ (endTime - startTime) + " ns");
+				long endTime = System.nanoTime();
+				
+				double time = (endTime - startTime) / 1000000000.0;
+				String timeTrunc = new DecimalFormat("#.###").format(time);	
+				System.out.print("Payout: " + score + ", job order: " + repres +"; Took "+ timeTrunc + "s");
 				System.out.println("");
 			}
 			
@@ -105,7 +109,7 @@ public class Permutation {
 		return null; // No more mobile directional numbers exist. All the permutations have been found.
 	}
 	public static void main(String[] args) {
-		Problem.loadProblem("problems/Problem2.txt");
+		Problem.loadProblem("problems/Problem1.txt");
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
 		//System.out.println(myJobs);
 		//System.out.println("Starting Bruteforcing " + myJobsIds.size() + " jobs.");

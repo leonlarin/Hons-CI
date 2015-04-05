@@ -5,4 +5,5 @@ public class Job {
 	int setdown;
 	int available;
 	int[][] payments = new int[4][2];
+	public int maxPayout;
 }

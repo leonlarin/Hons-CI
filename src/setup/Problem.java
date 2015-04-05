@@ -34,7 +34,7 @@ public class Problem {
 	public static void loadProblem(String filename){
 		try{
 		BufferedReader br = new BufferedReader(new FileReader(filename));
-		
+		int maxPayout = 0;
 		String line = null;
 		while ((line = br.readLine()) != null) {
 			String[] buffer = line.split(",");
@@ -57,7 +57,7 @@ public class Problem {
 				for (int x=0; x < size; x++){
 					line = br.readLine();
 					Job j = new Job();
-					buffer = line.split(",");
+					buffer = line.split(","); 
 					j.id = Integer.parseInt(buffer[0]);
 					j.pickup = Integer.parseInt(buffer[1]);
 					j.setdown = Integer.parseInt(buffer[2]);
@@ -70,6 +70,8 @@ public class Problem {
 					j.payments[2][1] = Integer.parseInt(buffer[9]);
 					j.payments[3][0] = Integer.parseInt(buffer[10]);
 					j.payments[3][1] = Integer.parseInt(buffer[11]);
+					maxPayout = maxPayout + j.payments[0][1];
+					j.maxPayout = maxPayout;
 					jobs.add(j);
 				}
 			}
