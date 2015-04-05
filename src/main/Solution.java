@@ -1,4 +1,8 @@
+package main;
+
 import java.util.*;
+import setup.Job;
+import setup.Problem;
 
 public class Solution {
 

@@ -1,5 +1,9 @@
+package permutations;
 import java.util.*;
 import java.math.BigInteger;
+
+import setup.Job;
+import setup.Problem;
 
 public class Permutation {
 	//Johnson-Trotter Algorithm Listing All Permutations
@@ -101,7 +105,7 @@ public class Permutation {
 		return null; // No more mobile directional numbers exist. All the permutations have been found.
 	}
 	public static void main(String[] args) {
-		Problem.loadProblem("C:/Users/Atrum/Eclipse/CI CW/problems/Problem2.txt");
+		Problem.loadProblem("problems/Problem2.txt");
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
 		//System.out.println(myJobs);
 		//System.out.println("Starting Bruteforcing " + myJobsIds.size() + " jobs.");
@@ -115,14 +119,14 @@ public class Permutation {
   }
 }
 
-
+//OBSOLETE
 //This is wrong and almost melted my PC
 //At the point of writing I forgot about the difference between permutation and combination.
 //This code bruteforces all the combinations
+
 	/*private static List<List<Integer>> combinations(List<Integer> list, int maxLength) {
 		return combinations(list, maxLength, new ArrayList(), new ArrayList());
 	}
-
 	private static List<List<Integer>> combinations(List<Integer> list, int length, List<Integer> current, List<List<Integer>> result) {
 		if (length == 0) {
 			List<List<Integer>> newResult =  new ArrayList<>(result);
@@ -130,21 +134,18 @@ public class Permutation {
 			System.out.println(current);
 			return newResult;
 		}
-
 		List<List<List<Integer>>> res3 = new ArrayList<>();
 		for (Integer i : list) {
 			List<Integer> newCurrent = new ArrayList<>(current);
 			newCurrent.add(i);
 			res3.add(combinations(list, length - 1, newCurrent, result));
     		}
-
     	List<List<Integer>> res2 = new ArrayList<>();
     		for (List<List<Integer>> lst : res3) {
     			res2.addAll(lst);
     		}
     	return res2;
 	}
-
 	public static void printCombinations(List<Integer> list, int maxLength) {
 		List<List<Integer>> combs = combinations(list, maxLength);
 		for (List<Integer> lst : combs) {

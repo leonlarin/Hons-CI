@@ -1,3 +1,6 @@
+package permutations;
+import setup.Job;
+
 public class DirectionalEntity implements Comparable<DirectionalEntity> {
 	
 	private Job job;
@@ -31,7 +34,4 @@ public class DirectionalEntity implements Comparable<DirectionalEntity> {
 	public int getDir() {
 		return dir;
 	}
-
-	
-
 }

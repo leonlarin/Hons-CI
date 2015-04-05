@@ -1,5 +1,6 @@
+package setup;
 public class Job {
-    int id;
+    public int id;
 	int pickup;
 	int setdown;
 	int available;
