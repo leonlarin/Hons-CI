@@ -7,6 +7,7 @@ import org.jgap.Configuration;
 import org.jgap.Gene;
 import org.jgap.Genotype;
 import org.jgap.IChromosome;
+import org.jgap.Population;
 import org.jgap.audit.Evaluator;
 import org.jgap.audit.PermutingConfiguration;
 import org.jgap.impl.*;
@@ -16,29 +17,14 @@ import setup.Problem;
 
 public class Solution {
 	
-	private static final int MAX_ALLOWED_EVOLUTIONS = 80;
+	private static final int MAX_ALLOWED_EVOLUTIONS = 1000;
 	private static int maximumPayout;
-	
-	public double fitnessFunct(IChromosome jobOrderChromosome) {
-		int payoutOfJobOrder = payoutForJob(jobOrderChromosome);
-		int payoutDiffirence = Math.abs(maximumPayout - payoutOfJobOrder);
-		
-		double fitness = (maximumPayout - payoutDiffirence);
-		if(payoutOfJobOrder == maximumPayout)
-		{
-			fitness = maximumPayout;
-		}
-		return fitness;
-	}
-	public static int payoutForJob(IChromosome orderedJobs ){
-		return -1; //Problem.score(chromosomeToArrayList(orderedJobs));
-	}
 
 	public static void findSolution()
 		      throws Exception {
 		Problem.loadProblem("problems/Problem1.txt");
 		ArrayList<Job> jobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));  
-		maximumPayout = jobs.get(0).maxPayout;
+		maximumPayout = jobs.get(9).maxPayout;
 		int jobsnumber = jobs.size();
 		//Config for our setup.
 		Configuration conf = new DefaultConfiguration();
@@ -54,38 +40,39 @@ public class Solution {
 	    Gene[] sampleGenes = new Gene[jobsnumber];
 	    for(int i=0; i < jobsnumber;i++){
 	    	sampleGenes[i] = new IntegerGene(conf, 0, jobsnumber);
+	    	sampleGenes[i].setAllele(i);
 	    }
 	    
 	    
 	        
 	    Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
 	    conf.setSampleChromosome(sampleChromosome);
-	    conf.setPopulationSize(500);
+	    conf.setPopulationSize(100);
 	    PermutingConfiguration pconf = new PermutingConfiguration(conf);
-	    pconf.addGeneticOperatorSlot(new CrossoverOperator(conf));
+	    pconf.addGeneticOperatorSlot(new GreedyCrossover(conf));
 	    pconf.addGeneticOperatorSlot(new MutationOperator(conf));
 	    pconf.addNaturalSelectorSlot(new BestChromosomesSelector(conf));
 	    pconf.addNaturalSelectorSlot(new WeightedRouletteSelector(conf));
 	    pconf.addRandomGeneratorSlot(new StockRandomGenerator());
-	    RandomGeneratorForTesting rn = new RandomGeneratorForTesting();
-	    rn.setNextDouble(0.7d);
-	    rn.setNextInt(2);
-	    pconf.addRandomGeneratorSlot(rn);
 	    pconf.addRandomGeneratorSlot(new GaussianRandomGenerator());
 	    pconf.addFitnessFunctionSlot(new FitFunction(
 	        maximumPayout));
 	    Evaluator eval = new Evaluator(pconf);
 	    int permutation = 0;
 	    while (eval.hasNext()) {
-	      // Create random initial population of Chromosomes.
-	      // ------------------------------------------------
-	      Genotype population = Genotype.randomInitialGenotype(eval.next());
+	      
+	    Genotype population = Genotype.randomInitialGenotype(eval.next());
+	    population.getPopulation().setChromosome(0, sampleChromosome);
 	      for (int run = 0; run < 10; run++) {
 	        // Evolve the population. Since we don't know what the best answer
 	        // is going to be, we just evolve the max number of times.
 	        // ---------------------------------------------------------------
 	        for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
-	          population.evolve();
+	          try{
+	        	  population.evolve();  
+	          }
+	        	catch (java.lang.Error e){}
+	        
 	          // add current best fitness to chart
 	          double fitness = population.getFittestChromosome().getFitnessValue();
 	          if (i % 3 == 0) {
@@ -99,6 +86,7 @@ public class Solution {
 	      IChromosome bestSolutionSoFar = population.getFittestChromosome();
 	      System.out.println("The best solution has a fitness value of " +
 	                         bestSolutionSoFar.getFitnessValue());
+	      System.out.println(population.getFittestChromosome());
 	      permutation++;
 	    }
 	}

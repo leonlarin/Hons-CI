@@ -33,6 +33,7 @@ public class Problem {
 	
 	public static void loadProblem(String filename){
 		try{
+			jobs.clear();
 		BufferedReader br = new BufferedReader(new FileReader(filename));
 		int maxPayout = 0;
 		String line = null;
