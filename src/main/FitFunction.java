@@ -16,9 +16,10 @@ public class FitFunction extends FitnessFunction{
 	
 	private static int maximumPayout;
 	private static ArrayList<Job> setupData(){
-		Problem.loadProblem("problems/Problem1.txt");
+		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");	
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
-		maximumPayout = myJobs.get(0).maxPayout;
+		int problemSize = myJobs.size();
+		maximumPayout = myJobs.get(problemSize - 1).maxPayout;
 		return myJobs;
 	}
 	
@@ -26,10 +27,13 @@ public class FitFunction extends FitnessFunction{
 	//This void might cause problems
 	public FitFunction(int targetPayout)
 	{
+		ArrayList<Job> myJobs = setupData();
 		if(targetPayout < 1 || targetPayout > maximumPayout)
 		{
+			
 			throw new IllegalArgumentException(
 					"Wrong MaxPayout");
+			
 		}
 		maximumPayout = targetPayout;
 	}

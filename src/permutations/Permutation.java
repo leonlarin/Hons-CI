@@ -3,6 +3,7 @@ import java.util.*;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 
+import main.Solution;
 import setup.Job;
 import setup.Problem;
 
@@ -109,7 +110,7 @@ public class Permutation {
 		return null; // No more mobile directional numbers exist. All the permutations have been found.
 	}
 	public static void main(String[] args) {
-		Problem.loadProblem("problems/Problem1.txt");
+		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
 		//System.out.println(myJobs);
 		//System.out.println("Starting Bruteforcing " + myJobsIds.size() + " jobs.");
