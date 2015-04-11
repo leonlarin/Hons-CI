@@ -15,10 +15,12 @@ import setup.Problem;
 
 public class Solution {
 	public static int problemNumber = 1;
-	private static final int MAX_ALLOWED_EVOLUTIONS = 500;
-	public static final int populationSize = 5000;
-	private static final int mutationModifier = 2; 
+	private static final int MAX_ALLOWED_EVOLUTIONS = 100;
+	public static final int populationSize = 1000;
+	private static final int mutationModifier = 10; 
 	//Mutation modifier is 1/x so number of 1000 will mutate one in 1000 genes
+	private static final double originalRate = 0.95;
+	//How much of original population is selected for breeding.
 	
 	private static int maximumPayout;
 	
@@ -51,7 +53,7 @@ public class Solution {
 	    conf.addGeneticOperator(greed);
 	    
 	    BestChromosomesSelector bcs = new BestChromosomesSelector(conf);
-	    bcs.setOriginalRate(0.2);
+	    bcs.setOriginalRate(originalRate);
 	    bcs.setDoubletteChromosomesAllowed(false);
 	    conf.addNaturalSelector(bcs, false);
 	    
@@ -91,44 +93,29 @@ public class Solution {
 	    }
 	    Genotype population = new Genotype(conf, firstPopulation);
 	    for(int j = 0; j<MAX_ALLOWED_EVOLUTIONS;j++) {
-	    	   
 	    
-	    //IChromosome bestSolutionSoFar = population.getFittestChromosome();
-	    //Genotype population = Genotype.randomInitialGenotype( conf );
-	    
-	      for (int run = 0; run < 10; run++) {
+	     //for (int run = 0; run < 2; run++) {
 	    	  
-	    	  //System.out.println(population.getPopulation().size());
-        	
-        	  
+    	 System.out.println(population.getPopulation().size());
 	        // Evolve the population. Since we don't know what the best answer
 	        // is going to be, we just evolve the max number of times.
 	        // ---------------------------------------------------------------
-	        for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
-	          //try{
-	        	  population.evolve();
-	        	  
-	        	  
-	        //  }
-	        	//catch (java.lang.Error e){}
+	        //for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
 	        
+    	 population.evolve();
+	        	  
 	          // add current best fitness to chart
 	          double fitness = population.getFittestChromosome().getFitnessValue();
 	          //System.out.println(fitness);
-	          if (i % 3 == 0) {
-	            String s = String.valueOf(i);
-	            //eval.setValue(permutation, run, fitness, "" + permutation, s);
-	            //eval.storeGenotype(permutation, run, population);
-
-	          }
-	        }
-	      }		
+	        
+	      //}		
 	      IChromosome bestSolutionSoFar = population.getFittestChromosome();
 	      System.out.println("The best solution in the poulation has a fitness value of " +
 	                         bestSolutionSoFar.getFitnessValue());
 	      System.out.println(FitFunction.getJobOrderIds(population.getFittestChromosome()));
 	    }
-	}
+	    }
+	//}
 	
     public static void main(String[] args) {
 	    try {
