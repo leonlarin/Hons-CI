@@ -111,12 +111,7 @@ public class Permutation {
 	}
 	public static void main(String[] args) {
 		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");
-		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
-		//System.out.println(myJobs);
-		//System.out.println("Starting Bruteforcing " + myJobsIds.size() + " jobs.");
-		//System.out.println("Jobs: " + myJobsIds);
-		//printCombinations(myJobsIds, myJobsIds.size());	
-		
+		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));	
 		Permutation p = new Permutation(myJobs);
 		p.getPermutation();
 		

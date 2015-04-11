@@ -3,7 +3,6 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.jgap.Chromosome;
 import org.jgap.FitnessFunction;
 import org.jgap.Gene;
 import org.jgap.IChromosome;
@@ -15,6 +14,8 @@ import setup.Problem;
 public class FitFunction extends FitnessFunction{
 	
 	private static int maximumPayout;
+	
+	//Setting up the Jobs data 
 	private static ArrayList<Job> setupData(){
 		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");	
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
@@ -24,9 +25,10 @@ public class FitFunction extends FitnessFunction{
 	}
 	
 	
-	//This void might cause problems
+	//Setting the Fittness function
 	public FitFunction(int targetPayout)
 	{
+		@SuppressWarnings("unused")
 		ArrayList<Job> myJobs = setupData();
 		if(targetPayout < 1 || targetPayout > maximumPayout)
 		{
@@ -38,15 +40,7 @@ public class FitFunction extends FitnessFunction{
 		maximumPayout = targetPayout;
 	}
 	
-	/*private static ArrayList<Job> chromosomeToArrayList(IChromosome chromosome){
-		//Do Stuff here to convert a Ichromosome to arraylist of jobs
-		return ArrayList<Job>;
-	}
-	
-	private static IChromosome arrayListToChromosome(ArrayList<Job> jobList){
-		return IChromosome;
-	}*/
-	
+	//Evaluating the fitness of a job order.
 	public double evaluate(IChromosome jobOrderChromosome) {
 		int payoutOfJobOrder = payoutForJob(jobOrderChromosome);
 		
@@ -59,15 +53,17 @@ public class FitFunction extends FitnessFunction{
 		return fitness;
 	}
 	
+	//Helper function that returns an ArrayList of job order Ids as objects.
 	public static ArrayList<Object> getJobOrderIds(IChromosome jobGeneOrder){
 		ArrayList<Object> listOfJobIds = new ArrayList<Object>();
 		for(int i = 0; i < jobGeneOrder.size(); i++){
-			listOfJobIds.add(jobGeneOrder.getGene(i).getAllele()); // [i].getAllele());// = jobGeneOrder[i].getAllele();
+			listOfJobIds.add(jobGeneOrder.getGene(i).getAllele());
 		}
 		return listOfJobIds;
 		
 	}
 	
+	//Get the payout for the job order
 	public static int payoutForJob(IChromosome orderedJobs ){
 		Gene[] jobGeneOrder = orderedJobs.getGenes();
 		
@@ -75,10 +71,12 @@ public class FitFunction extends FitnessFunction{
 		ArrayList<Object> listOfJobIds = new ArrayList<Object>();
 		ArrayList<Job> sortedJobs = new ArrayList<Job>();
 		
+		//Getting a list of Ids from genes.
 		for(int i = 0; i < jobGeneOrder.length; i++){
-			listOfJobIds.add(jobGeneOrder[i].getAllele());// = jobGeneOrder[i].getAllele();
+			listOfJobIds.add(jobGeneOrder[i].getAllele());
 		}
 		
+		//Converting Ids we got from genes to Job objects with all the info
 		for(int j =0; j < listOfJobIds.size();j++){
 			for(Job jobObject : jobsData){
 				int tempId = Integer.parseInt(listOfJobIds.get(j).toString());
@@ -87,11 +85,7 @@ public class FitFunction extends FitnessFunction{
 				}
 			}
 		}
-		//System.out.println(listOfJobIds);
-		int score = Problem.score(sortedJobs);
-		//System.out.println(score);
-		
-		return score;
+		return Problem.score(sortedJobs);
 	}
 	
 }

@@ -1,6 +1,8 @@
 package permutations;
 import setup.Job;
 
+
+/*Johnson-Trotter Algorithm Listing All Permutations*/
 public class DirectionalEntity implements Comparable<DirectionalEntity> {
 	
 	private Job job;
