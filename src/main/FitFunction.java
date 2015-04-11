@@ -3,10 +3,10 @@ package main;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.jgap.Chromosome;
 import org.jgap.FitnessFunction;
 import org.jgap.Gene;
 import org.jgap.IChromosome;
-
 
 import setup.Job;
 import setup.Problem;
@@ -49,14 +49,23 @@ public class FitFunction extends FitnessFunction{
 	
 	public double evaluate(IChromosome jobOrderChromosome) {
 		int payoutOfJobOrder = payoutForJob(jobOrderChromosome);
-		int payoutDiffirence = Math.abs(maximumPayout - payoutOfJobOrder);
 		
-		double fitness = (maximumPayout - payoutDiffirence);
-		if(payoutOfJobOrder == maximumPayout)
-		{
-			fitness = maximumPayout;
+		double fitness = payoutOfJobOrder;
+		
+		if (fitness<0){
+			fitness=0;
 		}
+		
 		return fitness;
+	}
+	
+	public static ArrayList<Object> getJobOrderIds(IChromosome jobGeneOrder){
+		ArrayList<Object> listOfJobIds = new ArrayList<Object>();
+		for(int i = 0; i < jobGeneOrder.size(); i++){
+			listOfJobIds.add(jobGeneOrder.getGene(i).getAllele()); // [i].getAllele());// = jobGeneOrder[i].getAllele();
+		}
+		return listOfJobIds;
+		
 	}
 	
 	public static int payoutForJob(IChromosome orderedJobs ){
@@ -67,14 +76,22 @@ public class FitFunction extends FitnessFunction{
 		ArrayList<Job> sortedJobs = new ArrayList<Job>();
 		
 		for(int i = 0; i < jobGeneOrder.length; i++){
-			listOfJobIds.add(jobGeneOrder[i].getAllele());
+			listOfJobIds.add(jobGeneOrder[i].getAllele());// = jobGeneOrder[i].getAllele();
 		}
 		
 		for(int j =0; j < listOfJobIds.size();j++){
-			sortedJobs.add(jobsData.get(j));
+			for(Job jobObject : jobsData){
+				int tempId = Integer.parseInt(listOfJobIds.get(j).toString());
+				if (jobObject.id == tempId){
+					sortedJobs.add(jobObject);
+				}
+			}
 		}
+		//System.out.println(listOfJobIds);
+		int score = Problem.score(sortedJobs);
+		//System.out.println(score);
 		
-		return Problem.score(sortedJobs);
+		return score;
 	}
 	
 }

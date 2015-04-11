@@ -8,19 +8,20 @@ import org.jgap.Gene;
 import org.jgap.Genotype;
 import org.jgap.IChromosome;
 import org.jgap.Population;
-import org.jgap.audit.Evaluator;
-import org.jgap.audit.PermutingConfiguration;
 import org.jgap.impl.*;
 
 import setup.Job;
 import setup.Problem;
 
 public class Solution {
-	
-	private static final int MAX_ALLOWED_EVOLUTIONS = 1000;
-	private static final int pupulationSize = 10;
-	private static int maximumPayout;
 	public static int problemNumber = 1;
+	private static final int MAX_ALLOWED_EVOLUTIONS = 500;
+	public static final int populationSize = 5000;
+	private static final int mutationModifier = 2; 
+	//Mutation modifier is 1/x so number of 1000 will mutate one in 1000 genes
+	
+	private static int maximumPayout;
+	
 
 	public static void findSolution()
 		      throws Exception {
@@ -28,67 +29,92 @@ public class Solution {
 		ArrayList<Job> jobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));  
 		maximumPayout = jobs.get(jobs.size() - 1).maxPayout;
 		int jobsnumber = jobs.size();
+		
 		//Config for our setup.
 		Configuration conf = new DefaultConfiguration();
+	    
+	    conf.getNaturalSelectors(false).clear();
+	    conf.getGeneticOperators().clear();
+	    
 	    conf.setPreservFittestIndividual(true);
 	    
 	    FitFunction myFunc =
 	            new FitFunction(maximumPayout);
 	        conf.setFitnessFunction(myFunc);
 	    
-	    conf.addGeneticOperator(new GreedyCrossover(conf));
-	    conf.addGeneticOperator(new SwappingMutationOperator(conf, 1));
-	    conf.getNaturalSelectors(false);
-	    		//new BestChromosomesSelector(conf));
-	    //conf.addNaturalSelector(new WeightedRouletteSelector(conf));
+	    //conf.addNaturalSelector(new CustomSelector(conf), true);//Selector Before
+	    
+	    
+	    
+	    GreedyCrossover greed = new GreedyCrossover(conf);
+	    greed.setStartOffset(0);
+	    conf.addGeneticOperator(greed);
+	    
+	    BestChromosomesSelector bcs = new BestChromosomesSelector(conf);
+	    bcs.setOriginalRate(0.2);
+	    bcs.setDoubletteChromosomesAllowed(false);
+	    conf.addNaturalSelector(bcs, false);
+	    
+	    SwappingMutationOperator swap = new SwappingMutationOperator(conf, mutationModifier);
+	    swap.setStartOffset(0);
+	    conf.addGeneticOperator(swap);
+	    
+	    //conf.addNaturalSelector(new WeightedRouletteSelector(conf), false);
+	    
+	    //conf.addNaturalSelector(new CustomSelector(conf), false);//Selector After
+	    
+
 	    //conf.setRandomGenerator(new StockRandomGenerator());
 	    conf.setRandomGenerator(new GaussianRandomGenerator());
 	    
+	    
 	    Gene[] sampleGenes = new Gene[jobsnumber];
 	    for(int i=0; i < jobsnumber;i++){
-	    	sampleGenes[i] = new IntegerGene(conf, 0, jobsnumber);
+	    	sampleGenes[i] = new IntegerGene(conf, 0, jobsnumber-1);
 	    	sampleGenes[i].setAllele(i);
 	    }
-	            
+	    
+	    Gene[] randomisedGenes = sampleGenes;
+	    Collections.shuffle(Arrays.asList(randomisedGenes));
+	    
 	    Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
-	    
-	    
-
+	    Chromosome randomChromosome = new Chromosome(conf, randomisedGenes);
 	    conf.setSampleChromosome(sampleChromosome);
-	    conf.setPopulationSize(pupulationSize);
-	    /*
-	    PermutingConfiguration pconf = new PermutingConfiguration(conf);
-	    pconf.addGeneticOperatorSlot(new GreedyCrossover(conf));
-	    pconf.addGeneticOperatorSlot(new MutationOperator(conf));
-	    pconf.addNaturalSelectorSlot(new BestChromosomesSelector(conf));
-	    pconf.addNaturalSelectorSlot(new WeightedRouletteSelector(conf));
-	    pconf.addRandomGeneratorSlot(new StockRandomGenerator());
-	    pconf.addRandomGeneratorSlot(new GaussianRandomGenerator());
-	    pconf.addFitnessFunctionSlot(new FitFunction(
-	        maximumPayout));
-	    Evaluator eval = new Evaluator(pconf);
-	    */
-	    int permutation = 0;
+	    conf.setPopulationSize(populationSize);
 	    
 	    Population firstPopulation = new Population(conf);
-	    firstPopulation.addChromosome(sampleChromosome);
 	    
-	    for(int j = 0; j<MAX_ALLOWED_EVOLUTIONS;j++) {
-	      
+	    for(int o = 0; o<populationSize; o++)
+	    {	
+	    	firstPopulation.addChromosome(sampleChromosome);
+	    	//firstPopulation.addChromosome(randomChromosome);
+	    }
 	    Genotype population = new Genotype(conf, firstPopulation);
-	    //getPopulation().setChromosome(0, sampleChromosome);
+	    for(int j = 0; j<MAX_ALLOWED_EVOLUTIONS;j++) {
+	    	   
+	    
+	    //IChromosome bestSolutionSoFar = population.getFittestChromosome();
+	    //Genotype population = Genotype.randomInitialGenotype( conf );
+	    
 	      for (int run = 0; run < 10; run++) {
+	    	  
+	    	  //System.out.println(population.getPopulation().size());
+        	
+        	  
 	        // Evolve the population. Since we don't know what the best answer
 	        // is going to be, we just evolve the max number of times.
 	        // ---------------------------------------------------------------
 	        for (int i = 0; i < MAX_ALLOWED_EVOLUTIONS; i++) {
-	          try{
-	        	  population.evolve();  
-	          }
-	        	catch (java.lang.Error e){}
+	          //try{
+	        	  population.evolve();
+	        	  
+	        	  
+	        //  }
+	        	//catch (java.lang.Error e){}
 	        
 	          // add current best fitness to chart
 	          double fitness = population.getFittestChromosome().getFitnessValue();
+	          //System.out.println(fitness);
 	          if (i % 3 == 0) {
 	            String s = String.valueOf(i);
 	            //eval.setValue(permutation, run, fitness, "" + permutation, s);
@@ -98,10 +124,9 @@ public class Solution {
 	        }
 	      }		
 	      IChromosome bestSolutionSoFar = population.getFittestChromosome();
-	      System.out.println("The best solution has a fitness value of " +
+	      System.out.println("The best solution in the poulation has a fitness value of " +
 	                         bestSolutionSoFar.getFitnessValue());
-	      System.out.println(population.getFittestChromosome());
-	      permutation++;
+	      System.out.println(FitFunction.getJobOrderIds(population.getFittestChromosome()));
 	    }
 	}
 	

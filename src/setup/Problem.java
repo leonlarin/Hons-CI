@@ -91,12 +91,12 @@ public class Problem {
 		int time = 0;
 		
 		if (plan.size() < jobs.size()){
-			System.out.println("Error: Jobs missing");
+			//System.out.println("Error: Jobs missing");
 			return -1;
 		}
 
 		if (plan.size() > jobs.size()){
-			System.out.println("Error: Extra jobs");
+			//System.out.println("Error: Extra jobs");
 			return -1;
 		}
 
@@ -122,7 +122,6 @@ public class Problem {
 			}
 			location = j.setdown;
 		}
-		
 		return reward;
 	}
 }
