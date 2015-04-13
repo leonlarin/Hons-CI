@@ -1,5 +1,6 @@
 package main;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 import org.jgap.Chromosome;
@@ -15,7 +16,7 @@ import setup.Problem;
 
 public class Solution {
 	//Change this to swap the problem being solved.
-	public static int problemNumber = 3;
+	public static int problemNumber = 2;
 	
 	//Parameters for EA
 	private static final int MAX_ALLOWED_EVOLUTIONS = 100;
@@ -103,19 +104,24 @@ public class Solution {
 	    	firstPopulation.addChromosome(randomChromosome);
 	    }
 	    Genotype population = new Genotype(conf, firstPopulation);
-	    for(int j = 0; j<MAX_ALLOWED_EVOLUTIONS;j++) {	    	  
+	    long startTime = System.nanoTime();
+	    for(int j = 0; j<MAX_ALLOWED_EVOLUTIONS;j++) {
 	    	//System.out.println(population.getPopulation().size());
 	    	
 	        // Evolve the population. Since we don't know what the best answer
 	        // is going to be, we just evolve the max number of times.
 	        // ---------------------------------------------------------------       
 	    	population.evolve();  
-	        
+	    	long endTime = System.nanoTime();
+			
+			double time = (endTime - startTime) / 1000000000.0;
+			String timeTrunc = new DecimalFormat("#.###").format(time);	
 	        //The fitness value is the total payout for a particular job order represented by a chromosome.
 	        IChromosome bestSolutionSoFar = population.getFittestChromosome();
 	        System.out.println("The best solution in this poulation has a fitness value of " +
 	                         bestSolutionSoFar.getFitnessValue());
-	        System.out.println(FitFunction.getJobOrderIds(population.getFittestChromosome()));
+	        System.out.println(FitFunction.getJobOrderIds(population.getFittestChromosome()) + " Cycle: " + j 
+	        			+ " Time: " + timeTrunc);
 	        System.out.println();
 	    }
 }

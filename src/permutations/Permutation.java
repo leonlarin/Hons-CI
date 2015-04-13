@@ -8,7 +8,7 @@ import setup.Job;
 import setup.Problem;
 
 public class Permutation {
-	//Johnson-Trotter Algorithm Listing All Permutations
+	//	 Listing All Permutations
 	//Adapted to work with lists of job objects. 
 	private List<DirectionalEntity> entityList = new ArrayList<DirectionalEntity>();
 	
