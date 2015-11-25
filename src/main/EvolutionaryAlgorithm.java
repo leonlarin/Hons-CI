@@ -11,6 +11,7 @@ import org.jgap.Genotype;
 import org.jgap.IChromosome;
 import org.jgap.Population;
 import org.jgap.impl.*;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -19,8 +20,8 @@ import java.io.IOException;
 import setup.Job;
 import setup.Problem;
 
-public class Solution {
-	//Next three settings are for monitoring and debugging and by default are set to false.
+public class EvolutionaryAlgorithm {
+	//Next four settings are for monitoring, analytics and debugging and by default are set to false.
 	private boolean _printToFile;
 	public void setPrintToFile(boolean printToFile) {
 		this._printToFile = printToFile;
@@ -43,6 +44,14 @@ public class Solution {
     }
     public boolean getUIMode() {
         return this._UIMode;
+    }
+    
+    private boolean _AnalyticsMode;
+	public void setAnalyticsMode(boolean AnalyticsMode) {
+		this._AnalyticsMode = AnalyticsMode;
+    }
+    public boolean getAnalyticsMode() {
+        return this._AnalyticsMode;
     }
     
 	//Parameters for EA
@@ -185,7 +194,7 @@ public class Solution {
 	    return population;
 	
 	}
-	public void findSolution(Genotype population) throws IOException{
+	public void findSolutions(Genotype population) throws IOException{
 		long startTime = System.nanoTime();
 	  
 	    //Main bit of the evolution algorithm, every cycle of this for loop is a generation.
@@ -203,6 +212,7 @@ public class Solution {
 			double time = (endTime - startTime) / 1000000000.0;
 			String timeTrunc = new DecimalFormat("#.###").format(time);	
 			IChromosome bestSolutionSoFar = population.getFittestChromosome();
+			
 			if(_printToConsole == true)
 			{
 				//The fitness value is the total payout for a particular job order represented by a chromosome.
@@ -226,13 +236,12 @@ public class Solution {
 			}
         }
 	}
-	
 	    
 
 
     public static void writeToFile(String textline) throws IOException {
 		//Setting up the file writer
-	    File file = new File("D:\\Documents\\Eclipse\\Hons-CI\\res\\results.txt");
+	    File file = new File("D:\\Documents\\Eclipse\\Hons-CI\\res\\results" + problemNumber + ".txt");
 	    FileWriter write = new FileWriter(file, true);
 	    PrintWriter print_line = new PrintWriter( write );
 	    print_line.printf( "%s" + "%n" , textline);

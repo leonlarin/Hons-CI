@@ -3,7 +3,7 @@ import java.util.*;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
 
-import main.Solution;
+import main.EvolutionaryAlgorithm;
 import setup.Job;
 import setup.Problem;
 
@@ -110,7 +110,7 @@ public class Permutation {
 		return null; // No more mobile directional numbers exist. All the permutations have been found.
 	}
 	public static void main(String[] args) {
-		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");
+		Problem.loadProblem("problems/Problem" + EvolutionaryAlgorithm.problemNumber + ".txt");
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));	
 		Permutation p = new Permutation(myJobs);
 		p.getPermutation();

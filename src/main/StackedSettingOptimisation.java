@@ -2,17 +2,17 @@ package main;
 
 import org.jgap.Genotype;
 
-import main.Solution;
+import main.EvolutionaryAlgorithm;
 
 public class StackedSettingOptimisation {
 
 	public static void main(String[] args) throws Exception {
-	Solution optimised = new Solution();
+	EvolutionaryAlgorithm optimised = new EvolutionaryAlgorithm();
 	optimised.setPrintToConsole(true);
 	optimised.setUIMode(false);
-	Solution.problemNumber = 2;
+	EvolutionaryAlgorithm.problemNumber = 2;
 	Genotype population = optimised.setupForEvolution();
-	optimised.findSolution(population);
+	optimised.findSolutions(population);
 
 	}
 

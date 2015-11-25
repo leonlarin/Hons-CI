@@ -26,7 +26,7 @@ public class FitFunction extends FitnessFunction{
 
 	//Setting up the Jobs data 
 	private static ArrayList<Job> setupData(){
-		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");	
+		Problem.loadProblem("problems/Problem" + EvolutionaryAlgorithm.problemNumber + ".txt");	
 		ArrayList<Job>  myJobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));
 		int problemSize = myJobs.size();
 		maximumPayout = myJobs.get(problemSize - 1).maxPayout;
