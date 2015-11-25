@@ -15,6 +15,15 @@ public class FitFunction extends FitnessFunction{
 	
 	private static int maximumPayout;
 	
+	private static int _problemNumber;
+	public static int getProblemNumber() {
+		return _problemNumber;
+	}
+	public static void setProblemNumber(int _problemNumber) {
+		FitFunction._problemNumber = _problemNumber;
+	}
+
+
 	//Setting up the Jobs data 
 	private static ArrayList<Job> setupData(){
 		Problem.loadProblem("problems/Problem" + Solution.problemNumber + ".txt");	
