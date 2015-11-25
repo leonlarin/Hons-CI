@@ -1,4 +1,4 @@
-package main;
+package optimizer;
 
 import java.text.DecimalFormat;
 
@@ -12,100 +12,16 @@ import org.jgap.IChromosome;
 import org.jgap.Population;
 import org.jgap.impl.*;
 
+import main.EvolutionaryAlgorithm;
+import main.FitFunction;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.IOException;
 
-import setup.Job;
-import setup.Problem;
+public class EAOptimizer extends EvolutionaryAlgorithm{
 
-public class EvolutionaryAlgorithm {
-	//Next four settings are for monitoring, analytics and debugging and by default are set to false.
-	protected boolean _printToCSV;
-	public void setPrintToCSV(boolean printToCSV) {
-		this._printToCSV = printToCSV;
-    }
-    public boolean getPrintToCSV() {
-        return this._printToCSV;
-    }
-    
-    protected boolean _printToConsole;
-	public void setPrintToConsole(boolean printToConsole) {
-		this._printToConsole = printToConsole;
-    }
-    public boolean getPrintToConsole() {
-        return this._printToConsole;
-    }
-    
-    protected boolean _UIMode;
-	public void setUIMode(boolean UIMode) {
-		this._UIMode = UIMode;
-    }
-    public boolean getUIMode() {
-        return this._UIMode;
-    }
-    
-    protected boolean _AnalyticsMode;
-	public void setAnalyticsMode(boolean AnalyticsMode) {
-		this._AnalyticsMode = AnalyticsMode;
-    }
-    public boolean getAnalyticsMode() {
-        return this._AnalyticsMode;
-    }
-    
-	//Parameters for EA
-	public static int problemNumber = 1;
-	
-    //Number of cycles/generations.
-	protected int _MAX_ALLOWED_EVOLUTIONS = 10;
-	public void setMaxAllowedEvolutions(int MAX_ALLOWED_EVOLUTIONS) {
-		_MAX_ALLOWED_EVOLUTIONS = MAX_ALLOWED_EVOLUTIONS;
-    }
-    public int getMaxAllowedEvolutions() {
-        return _MAX_ALLOWED_EVOLUTIONS;
-    }
-    
-    protected double _coefficient;
-    public double getCoefficient() {
-        return _coefficient;
-    }
-	
-	//Size of the initial population 
-    //Bigger size will increase the entropy of the population but will require more resources to go through cycles.
-    protected int _populationSize = 1000;
-	public void setPopulationSize(int populationSize) {
-		this._populationSize = populationSize;
-    }
-    public int getPopulationSize() {
-        return this._populationSize;
-    }
-    
-	//Mutation modifier is an inverse proportion(1/x), so a setting of a 1000 will mutate 1 in every 1000 genes.
-    protected int _mutationModifier = 10;
-	public void setMutationModifier(int mutationModifier) {
-		this._mutationModifier = mutationModifier;
-    }
-    public int getMutationModifier() {
-        return this._mutationModifier;
-    }
-    
-	//How much of original population is selected for breeding.
-	protected double _originalRate = 0.95;
-	public void originalRate() { this._originalRate = 0.95; }
-	public void setOriginalRate(double originalRate) {
-		this._originalRate = originalRate;
-    }
-    public double getOriginalRate() {
-        return this._originalRate;
-    }
-	
-	//Max payout is calculated by adding all the maximum possible payouts for any given job in the list
-	//This is used as an arbitrary parameter for Fitness function and can't possibly be reached.
-	private static int maximumPayout;
-	
-	
-	
 	public Genotype setupForEvolution()
 		      throws Exception {
 		
@@ -122,11 +38,6 @@ public class EvolutionaryAlgorithm {
 		    	user_input.close();
 		    }
 		}
-
-		Problem.loadProblem("problems/Problem" + problemNumber + ".txt");
-		ArrayList<Job> jobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));  
-		maximumPayout = jobs.get(jobs.size() - 1).maxPayout;
-		int jobsnumber = jobs.size();
 		
 		//Config for our setup.
 		Configuration conf = new DefaultConfiguration();
@@ -138,7 +49,7 @@ public class EvolutionaryAlgorithm {
 	    conf.setPreservFittestIndividual(true);
 	    
 	    
-	    FitFunction myFunc = new FitFunction(maximumPayout);
+	    OptimizerFitness myFunc = new OptimizerFitness();
 	    conf.setFitnessFunction(myFunc);
 	    
 	    //Attempt at a custom selector, depricated
@@ -146,9 +57,8 @@ public class EvolutionaryAlgorithm {
 	    
 	    //GreedyCrossover is a mutation operator that was designed for the Traveling Salesman Problem,
 	    //and is used here to get valid permutations of genes instead of generating random genes that would be invalid.
-	    GreedyCrossover greed = new GreedyCrossover(conf);
-	    greed.setStartOffset(0);
-	    conf.addGeneticOperator(greed);
+	    CustomMutator custom = new CustomMutator();
+	    conf.addGeneticOperator(custom);
 	    
 	    //Chooses the fittest chromosomes from the population for further breeding.
 	    BestChromosomesSelector bcs = new BestChromosomesSelector(conf);
@@ -156,34 +66,24 @@ public class EvolutionaryAlgorithm {
 	    bcs.setDoubletteChromosomesAllowed(false);
 	    conf.addNaturalSelector(bcs, false);
 	    
-	    //Another mutator that creates permutations of genes.
-	    //Having two mutator opperator diversifies the population and leads to faster evolution to the solution.
-	    SwappingMutationOperator swap = new SwappingMutationOperator(conf, _mutationModifier);
-	    swap.setStartOffset(0);
-	    conf.addGeneticOperator(swap);
-	    
 	    //Testing Selectors
-	    //conf.addNaturalSelector(new WeightedRouletteSelector(conf), false);
-	    //conf.addNaturalSelector(new CustomSelector(conf), false);//Selector After
+	    conf.addNaturalSelector(new WeightedRouletteSelector(conf), false);
 	    
 
 	    //conf.setRandomGenerator(new StockRandomGenerator());
 	    conf.setRandomGenerator(new GaussianRandomGenerator());
 	    
-	    //A gene representing all the jobs in order, this is used to create a sample chromosome.
-	    Gene[] sampleGenes = new Gene[jobsnumber];
-	    for(int i=0; i < jobsnumber;i++){
-	    	sampleGenes[i] = new IntegerGene(conf, 0, jobsnumber-1);
-	    	sampleGenes[i].setAllele(i);
-	    }
+	    Gene[] sampleGenes = new Gene[2];
+	    
+	    sampleGenes[0].setAllele(_populationSize); //pop size
+	    sampleGenes[1].setAllele(_mutationModifier); //mut rate
+	    sampleGenes[2].setAllele(_originalRate); //orig rate
+
 	    
 	    //A wildcard generator to assist in generating new solutions.
-	    Gene[] randomizedGenes = sampleGenes;
-	    Collections.shuffle(Arrays.asList(randomizedGenes));
 	    
 	    //Creating the initial population
 	    Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
-	    Chromosome randomChromosome = new Chromosome(conf, randomizedGenes);
 	    conf.setSampleChromosome(sampleChromosome);
 	    conf.setPopulationSize(_populationSize);
 	    
@@ -193,7 +93,6 @@ public class EvolutionaryAlgorithm {
 	    for(int o = 0; o<_populationSize; o++)
 	    {	
 	    	firstPopulation.addChromosome(sampleChromosome);
-	    	firstPopulation.addChromosome(randomChromosome);
 	    }
 	    Genotype population = new Genotype(conf, firstPopulation);
 	    return population;
@@ -230,10 +129,7 @@ public class EvolutionaryAlgorithm {
 		        System.out.println();
 			}
 	        
-			_coefficient = (((-1.0 / bestSolutionSoFar.getFitnessValue()) / time) * 1000) + 10000;
-			String coefTrunc = new DecimalFormat("#.##").format(_coefficient);	
-			
-			output  = (String.valueOf(coefTrunc) + "," + 
+			output  = (String.valueOf(new DecimalFormat("#.##").format(bestSolutionSoFar.getFitnessValue() / (Float.parseFloat(timeTrunc) * 100.0))) + "," + 
 	        		String.valueOf(bestSolutionSoFar.getFitnessValue()) + "," + 
 	        		String.valueOf(timeTrunc) + "," +
 	        		String.valueOf(_populationSize) + "," + 
@@ -259,7 +155,7 @@ public class EvolutionaryAlgorithm {
 
     public static void writeToFile(String textline) throws IOException {
 		//Setting up the file writer
-	    File file = new File("D:\\Documents\\Eclipse\\Hons-CI\\res\\results" + problemNumber + ".csv");
+	    File file = new File("D:\\Documents\\Eclipse\\Hons-CI\\res\\optimisation" + problemNumber + ".csv");
 	    FileWriter write = new FileWriter(file, true);
 	    PrintWriter print_line = new PrintWriter( write );
 	    print_line.printf( "%s" + "%n" , textline);
