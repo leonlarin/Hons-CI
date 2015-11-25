@@ -20,6 +20,7 @@ import setup.Job;
 import setup.Problem;
 
 public class Solution {
+	//Next three settings are for monitoring and debugging and by default are set to false.
 	private boolean _printToFile;
 	public void setPrintToFile(boolean printToFile) {
 		this._printToFile = printToFile;
@@ -29,15 +30,22 @@ public class Solution {
     }
     
     private boolean _printToConsole;
-	public void setprintToConsole(boolean printToConsole) {
+	public void setPrintToConsole(boolean printToConsole) {
 		this._printToConsole = printToConsole;
     }
-    public boolean getprintToConsole() {
+    public boolean getPrintToConsole() {
         return this._printToConsole;
     }
     
+    private boolean _UIMode;
+	public void setUIMode(boolean UIMode) {
+		this._UIMode = UIMode;
+    }
+    public boolean getUIMode() {
+        return this._UIMode;
+    }
+    
 	//Parameters for EA
-	//Change this to swap the problem being solved(1 to 5).
 	public static int problemNumber = 1;
 	
     //Number of cycles/generations.
@@ -87,6 +95,20 @@ public class Solution {
 	public Genotype setupForEvolution()
 		      throws Exception {
 		
+		//UI mode lets to manually set the problem for a demo
+		if(_UIMode)
+		{
+			System.out.println("Please enter the number of problem to solve(1 to 5).");
+		    Scanner user_input = new Scanner( System.in );
+		    problemNumber = Integer.parseInt(user_input.next());
+		    if(problemNumber > 5 || problemNumber < 1)
+		    {
+		    	problemNumber = 1;
+		    	System.out.println("Invalid value, procedeing with default problem 1.");
+		    	user_input.close();
+		    }
+		}
+
 		Problem.loadProblem("problems/Problem" + problemNumber + ".txt");
 		ArrayList<Job> jobs = new ArrayList<Job>(Arrays.asList(Problem.getJobs()));  
 		maximumPayout = jobs.get(jobs.size() - 1).maxPayout;

@@ -8,7 +8,9 @@ public class StackedSettingOptimisation {
 
 	public static void main(String[] args) throws Exception {
 	Solution optimised = new Solution();
-	optimised.setprintToConsole(true);
+	optimised.setPrintToConsole(true);
+	optimised.setUIMode(false);
+	Solution.problemNumber = 2;
 	Genotype population = optimised.setupForEvolution();
 	optimised.findSolution(population);
 
