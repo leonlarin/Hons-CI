@@ -40,61 +40,60 @@ public class EAOptimizer extends EvolutionaryAlgorithm{
 		}
 		
 		//Config for our setup.
-		Configuration conf = new DefaultConfiguration();
+		Configuration config = new DefaultConfiguration();
 	    
 		//Clearing all default Selectors and Operators as they mess with our desired type of mutation.
-	    conf.getNaturalSelectors(false).clear();
-	    conf.getGeneticOperators().clear();
+	    config.getNaturalSelectors(false).clear();
+	    config.getGeneticOperators().clear();
 	    
-	    conf.setPreservFittestIndividual(true);
+	    config.setPreservFittestIndividual(true);
 	    
 	    
 	    OptimizerFitness myFunc = new OptimizerFitness();
-	    conf.setFitnessFunction(myFunc);
+	    config.setFitnessFunction(myFunc);
 	    
 	    //Attempt at a custom selector, depricated
 	    //conf.addNaturalSelector(new CustomSelector(conf), true); 
 	    
 	    //GreedyCrossover is a mutation operator that was designed for the Traveling Salesman Problem,
 	    //and is used here to get valid permutations of genes instead of generating random genes that would be invalid.
-	    CustomMutator custom = new CustomMutator();
-	    conf.addGeneticOperator(custom);
+	    config.addGeneticOperator(new CustomMutator());
 	    
 	    //Chooses the fittest chromosomes from the population for further breeding.
-	    BestChromosomesSelector bcs = new BestChromosomesSelector(conf);
+	    BestChromosomesSelector bcs = new BestChromosomesSelector(config);
 	    bcs.setOriginalRate(_originalRate);
 	    bcs.setDoubletteChromosomesAllowed(false);
-	    conf.addNaturalSelector(bcs, false);
+	    config.addNaturalSelector(bcs, false);
 	    
 	    //Testing Selectors
-	    conf.addNaturalSelector(new WeightedRouletteSelector(conf), false);
+	    config.addNaturalSelector(new WeightedRouletteSelector(config), false);
 	    
 
 	    //conf.setRandomGenerator(new StockRandomGenerator());
-	    conf.setRandomGenerator(new GaussianRandomGenerator());
+	    config.setRandomGenerator(new GaussianRandomGenerator());
 	    
-	    Gene[] sampleGenes = new Gene[2];
+	    Gene[] sampleGenes = new Gene[3];
 	    
-	    sampleGenes[0].setAllele(_populationSize); //pop size
-	    sampleGenes[1].setAllele(_mutationModifier); //mut rate
-	    sampleGenes[2].setAllele(_originalRate); //orig rate
+	    sampleGenes[0] = new IntegerGene(config, 0, 1000); //pop size
+	    sampleGenes[1] = new IntegerGene(config, 10, 1000); //mut rate
+	    sampleGenes[2] = new DoubleGene(config, 0.0, 1); //orig rate
 
 	    
 	    //A wildcard generator to assist in generating new solutions.
 	    
 	    //Creating the initial population
-	    Chromosome sampleChromosome = new Chromosome(conf, sampleGenes);
-	    conf.setSampleChromosome(sampleChromosome);
-	    conf.setPopulationSize(_populationSize);
+	    Chromosome sampleChromosome = new Chromosome(config, sampleGenes);
+	    config.setSampleChromosome(sampleChromosome);
+	    config.setPopulationSize(_populationSize);
 	    
-	    Population firstPopulation = new Population(conf);
+	    Population firstPopulation = new Population(config);
 	    
 	    //Creating a sample population, consist
 	    for(int o = 0; o<_populationSize; o++)
 	    {	
 	    	firstPopulation.addChromosome(sampleChromosome);
 	    }
-	    Genotype population = new Genotype(conf, firstPopulation);
+	    Genotype population = new Genotype(config, firstPopulation);
 	    return population;
 	
 	}

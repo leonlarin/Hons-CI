@@ -129,6 +129,7 @@ public class EvolutionaryAlgorithm {
 		int jobsnumber = jobs.size();
 		
 		//Config for our setup.
+		Configuration.reset();
 		Configuration conf = new DefaultConfiguration();
 	    
 		//Clearing all default Selectors and Operators as they mess with our desired type of mutation.

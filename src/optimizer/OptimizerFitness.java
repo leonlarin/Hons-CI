@@ -26,11 +26,16 @@ public class OptimizerFitness extends FitnessFunction{
 		EvolutionaryAlgorithm test_subject = new EvolutionaryAlgorithm();
 		test_subject.setAnalyticsMode(true);
 		EvolutionaryAlgorithm.problemNumber = 1;
-					
+		if(setting[0].getAllele() == null){setting[0].setAllele(100);}
 		test_subject.setPopulationSize((int) setting[0].getAllele());
+		
+		if(setting[1].getAllele() == null){setting[1].setAllele(200);}
 		test_subject.setMutationModifier((int) setting[1].getAllele());
-		test_subject.setOriginalRate((int) setting[2].getAllele());
+		
+		if(setting[2].getAllele() == null){setting[2].setAllele(0.95);}
+		test_subject.setOriginalRate((double) setting[2].getAllele());
 		try {
+			setting = null;
 			Genotype population = test_subject.setupForEvolution();
 			test_subject.findSolutions(population);
 		} catch (Exception e) {
