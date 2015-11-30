@@ -231,6 +231,7 @@ public class EvolutionaryAlgorithm {
 		        System.out.println();
 			}
 	        
+			//Arbitrary number to judge how good are the settings for finding this solution, the bigger the better.
 			_coefficient = (((-1.0 / bestSolutionSoFar.getFitnessValue()) / time) * 1000) + 10000;
 			String coefTrunc = new DecimalFormat("#.##").format(_coefficient);	
 			
@@ -244,13 +245,13 @@ public class EvolutionaryAlgorithm {
 			
 			if(_printToCSV == true)
 			{
-		    	writeToFile(output);
+		    	writeToFile(output, false);
 			}
         }	    
 	    if(_AnalyticsMode == true)
 		{
-			//Writing this to a file for analytics, only writes the fittest chromosome from the last cycle.
-	    	writeToFile(output);
+			//Writing this to a file for analytics, only writes the fittest chromosome from the very last cycle.
+	    	writeToFile(output, _AnalyticsMode);
 	    	System.out.println("Fittest chromosome and its settings: " + output);
 	        
 		}
@@ -258,9 +259,11 @@ public class EvolutionaryAlgorithm {
 	    
 
 
-    public static void writeToFile(String textline) throws IOException {
+    public static void writeToFile(String textline, boolean analitics) throws IOException {
 		//Setting up the file writer
-	    File file = new File("D:\\Documents\\Eclipse\\Hons-CI\\res\\results" + problemNumber + ".csv");
+    	String filename = "results";
+    	if(analitics){filename = "analytics";}
+	    File file = new File("D:\\Documents\\Eclipse\\Hons-CI\\res\\" + filename + problemNumber + ".csv");
 	    FileWriter write = new FileWriter(file, true);
 	    PrintWriter print_line = new PrintWriter( write );
 	    print_line.printf( "%s" + "%n" , textline);

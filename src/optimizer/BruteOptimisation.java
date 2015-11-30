@@ -15,18 +15,23 @@ public class BruteOptimisation {
 		test_subject.setUIMode(false);
 		test_subject.setPrintToCSV(false);
 		test_subject.setAnalyticsMode(true);
-		EvolutionaryAlgorithm.problemNumber = 2;
+		
 		long startTime = System.nanoTime();
-		for(int popsize = 100; popsize <= 3000; popsize+=100) {
-			for(int mutrate = 10; mutrate < 100; mutrate+=10) {
-				for(int origrate = 0; origrate<99; origrate+=10) {
-					test_subject.setPopulationSize(popsize);
-					test_subject.setMutationModifier(mutrate);
-					double originalRate = origrate / 100.0;
-					test_subject.setOriginalRate(originalRate);
-					Genotype population = test_subject.setupForEvolution();
-					test_subject.findSolutions(population);
-					Configuration.reset();
+		for (int probNumb = 1; probNumb <= 5; probNumb++){
+			EvolutionaryAlgorithm.problemNumber = probNumb;
+			for(int i = 0; i <= 5; i++){
+				for(int popsize = 100; popsize <= 3000; popsize+=100) {
+					for(int mutrate = 10; mutrate < 100; mutrate+=10) {
+						for(int origrate = 0; origrate<99; origrate+=10) {
+							test_subject.setPopulationSize(popsize);
+							test_subject.setMutationModifier(mutrate);
+							double originalRate = origrate / 100.0;
+							test_subject.setOriginalRate(originalRate);
+							Genotype population = test_subject.setupForEvolution();
+							test_subject.findSolutions(population);
+							Configuration.reset();
+						}
+					}
 				}
 			}
 		}
