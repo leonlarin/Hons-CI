@@ -3,10 +3,10 @@ package main;
 import org.jgap.Genotype;
 
 /* This is the main file to run the evolution algorithm to solve a designated problem.
- * The settings can be manually set or read from the settings file, otherwise they default to the preset values for that specific problem.*/
-public class main {
+ * The settings can be manually set or otherwise they default to the preset values.*/
+public class Main {
 
-	public static void demo() throws Exception {
+	public static void main(String[] args) throws Exception {
 		//Creating the instance of the evolution algorithm configuration.
 		EvolutionaryAlgorithm solution = new EvolutionaryAlgorithm();
 		

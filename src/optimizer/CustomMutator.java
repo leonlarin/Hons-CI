@@ -3,7 +3,7 @@ package optimizer;
 import org.jgap.Gene;
 import org.jgap.GeneticOperator;
 import org.jgap.IChromosome;
-import org.jgap.InvalidConfigurationException;
+//import org.jgap.InvalidConfigurationException;
 import org.jgap.Population;
 
 import java.util.ArrayList;
@@ -42,13 +42,13 @@ public class CustomMutator implements GeneticOperator {
 			 genes[1].setAllele(mutationModifiers.get(new Random().nextInt(mutationModifiers.size())));
 	
 			 genes[2].setAllele(originalRates.get(new Random().nextInt(originalRates.size()))/100.0);
-			 
+			/* 
 			 try {
 				temp.setGenes(genes);
 			} catch (InvalidConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 			 
 	         a_candidateChromosomes.add(temp); 
          } 
